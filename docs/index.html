@@ -1,0 +1,297 @@
+<!doctype html>
+<html lang="cs">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Rozvrh ČZU</title>
+<meta name="description" content="Rozvrh z UIS ČZU v mobilu: týdenní přehled jako v Bakalářích, sudé a liché týdny, widgety na plochu. Přihlásíš se jednou.">
+<meta property="og:title" content="Rozvrh ČZU">
+<meta property="og:description" content="Tvůj rozvrh z UIS ČZU v mobilu, bez věčného přihlašování.">
+<meta property="og:image" content="https://mirda-nig.github.io/CZU-rozvrh/screenshots/tyden-tmavy.png">
+<link rel="icon" href="icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #F5F6F2;
+    --surface: #FFFFFF;
+    --surface-2: #ECEEE8;
+    --ink: #16201A;
+    --muted: #5E6862;
+    --line: #E1E4DD;
+    --primary: #1F6B47;
+    --primary-ink: #FFFFFF;
+    --primary-soft: #D5EEDF;
+    --primary-soft-ink: #0B3A24;
+    --czu: #73BE46;
+    --shadow: 0 1px 2px rgba(22,32,26,.06), 0 12px 40px -12px rgba(22,32,26,.18);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #0F1311;
+      --surface: #171C19;
+      --surface-2: #222823;
+      --ink: #E8ECE9;
+      --muted: #97A19B;
+      --line: #2A302C;
+      --primary: #8FD6AE;
+      --primary-ink: #06291A;
+      --primary-soft: #1D3D2C;
+      --primary-soft-ink: #C6EED6;
+      --shadow: 0 1px 2px rgba(0,0,0,.3), 0 16px 48px -16px rgba(0,0,0,.6);
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #0F1311; --surface: #171C19; --surface-2: #222823; --ink: #E8ECE9; --muted: #97A19B;
+    --line: #2A302C; --primary: #8FD6AE; --primary-ink: #06291A; --primary-soft: #1D3D2C; --primary-soft-ink: #C6EED6;
+    --shadow: 0 1px 2px rgba(0,0,0,.3), 0 16px 48px -16px rgba(0,0,0,.6);
+  }
+
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; overflow-x: clip; }
+  body {
+    margin: 0;
+    overflow-x: clip;
+    background: var(--bg);
+    color: var(--ink);
+    font: 500 17px/1.6 Manrope, system-ui, -apple-system, "Segoe UI", sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  a { color: inherit; }
+  .wrap { max-width: 1080px; margin: 0 auto; padding: 0 20px; }
+
+  /* horní lišta */
+  nav { display: flex; align-items: center; justify-content: space-between; padding: 20px 0; }
+  .brand { display: flex; align-items: center; gap: 10px; font-weight: 800; text-decoration: none; letter-spacing: -.01em; }
+  .brand img { width: 32px; height: 32px; border-radius: 9px; }
+  .nav-link { font-weight: 700; font-size: 15px; text-decoration: none; color: var(--muted); padding: 8px 14px; border-radius: 999px; }
+  .nav-link:hover { background: var(--surface-2); color: var(--ink); }
+
+  /* hero */
+  .hero { display: grid; grid-template-columns: 1.05fr .95fr; gap: 48px; align-items: center; padding: 40px 0 72px; }
+  .eyebrow {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: var(--primary-soft); color: var(--primary-soft-ink);
+    font-size: 13px; font-weight: 700; padding: 6px 12px; border-radius: 999px;
+  }
+  .eyebrow::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--czu); }
+  h1 { font-size: clamp(40px, 6.4vw, 68px); line-height: 1.02; letter-spacing: -.035em; font-weight: 800; margin: 18px 0 18px; }
+  h1 em { font-style: normal; color: var(--primary); }
+  .lead { font-size: 19px; color: var(--muted); max-width: 30em; margin: 0 0 30px; }
+  .cta { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+  .btn {
+    display: inline-flex; align-items: center; gap: 10px;
+    font: 700 16px/1 Manrope, system-ui, sans-serif; text-decoration: none;
+    padding: 16px 22px; border-radius: 16px; transition: transform .15s ease, box-shadow .15s ease;
+  }
+  .btn:hover { transform: translateY(-1px); }
+  .btn-primary { background: var(--primary); color: var(--primary-ink); box-shadow: var(--shadow); }
+  .btn-ghost { background: var(--surface-2); color: var(--ink); }
+  .btn svg { width: 20px; height: 20px; }
+  .meta { margin-top: 16px; font-size: 14px; color: var(--muted); }
+
+  .phones { position: relative; height: 560px; overflow: clip; overflow-clip-margin: 40px; }
+  .phone {
+    position: absolute; width: 250px; border-radius: 34px; padding: 8px;
+    background: #0B0D0C; box-shadow: var(--shadow);
+  }
+  .phone img { display: block; width: 100%; border-radius: 27px; }
+  .phone.front { left: 50%; top: 0; transform: translateX(-62%) rotate(-3deg); z-index: 2; }
+  .phone.back { left: 50%; top: 56px; transform: translateX(-2%) rotate(5deg); opacity: .96; }
+
+  /* sekce */
+  section { padding: 72px 0; }
+  h2 { font-size: clamp(28px, 4vw, 40px); letter-spacing: -.025em; line-height: 1.1; margin: 0 0 12px; font-weight: 800; }
+  .section-lead { color: var(--muted); margin: 0 0 40px; max-width: 34em; }
+
+  .features { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .card { background: var(--surface); border: 1px solid var(--line); border-radius: 22px; padding: 24px; }
+  .card h3 { margin: 14px 0 6px; font-size: 18px; letter-spacing: -.01em; }
+  .card p { margin: 0; color: var(--muted); font-size: 15.5px; }
+  .ico {
+    width: 44px; height: 44px; border-radius: 14px; display: grid; place-items: center;
+    background: var(--primary-soft); color: var(--primary-soft-ink);
+  }
+  .ico svg { width: 22px; height: 22px; }
+
+  .gallery { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+  .shot { margin: 0; }
+  .shot img { width: 100%; border-radius: 20px; border: 1px solid var(--line); display: block; }
+  .shot figcaption { font-size: 14px; color: var(--muted); margin-top: 10px; text-align: center; font-weight: 600; }
+  .note { font-size: 13px; color: var(--muted); margin-top: 18px; text-align: center; }
+
+  .steps { counter-reset: step; display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+  .step { background: var(--surface); border: 1px solid var(--line); border-radius: 22px; padding: 22px; }
+  .step::before {
+    counter-increment: step; content: counter(step);
+    display: grid; place-items: center; width: 34px; height: 34px; border-radius: 50%;
+    background: var(--primary); color: var(--primary-ink); font-weight: 800; margin-bottom: 14px;
+  }
+  .step h3 { margin: 0 0 6px; font-size: 17px; }
+  .step p { margin: 0; color: var(--muted); font-size: 15px; }
+
+  .privacy {
+    background: var(--surface); border: 1px solid var(--line); border-radius: 28px;
+    padding: 40px; display: grid; grid-template-columns: 1fr 1.2fr; gap: 40px; align-items: center;
+  }
+  .privacy ul { margin: 0; padding: 0; list-style: none; display: grid; gap: 14px; }
+  .privacy li { display: flex; gap: 12px; align-items: flex-start; }
+  .privacy li svg { flex: none; width: 22px; height: 22px; color: var(--primary); margin-top: 2px; }
+
+  .final { text-align: center; padding: 88px 0 72px; }
+  .final .cta { justify-content: center; }
+
+  footer { border-top: 1px solid var(--line); padding: 28px 0 40px; color: var(--muted); font-size: 14px; }
+  footer .wrap { display: flex; flex-wrap: wrap; gap: 12px; justify-content: space-between; }
+
+  @media (max-width: 900px) {
+    .hero { grid-template-columns: 1fr; padding-top: 16px; gap: 24px; }
+    .phones { height: 470px; }
+    .phone { width: 210px; }
+    .features { grid-template-columns: 1fr 1fr; }
+    .gallery { grid-template-columns: 1fr 1fr; }
+    .steps { grid-template-columns: 1fr 1fr; }
+    .privacy { grid-template-columns: 1fr; padding: 28px; gap: 20px; }
+  }
+  @media (max-width: 560px) {
+    body { font-size: 16px; }
+    .features, .steps { grid-template-columns: 1fr; }
+    .phones { height: 400px; }
+    .phone { width: 180px; border-radius: 28px; padding: 6px; }
+    .phone img { border-radius: 23px; }
+    .btn { width: 100%; justify-content: center; }
+    section { padding: 52px 0; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <nav>
+    <a class="brand" href="./"><img src="icon-192.png" alt="">Rozvrh ČZU</a>
+    <a class="nav-link" href="https://github.com/Mirda-Nig/CZU-rozvrh">GitHub</a>
+  </nav>
+
+  <header class="hero">
+    <div>
+      <span class="eyebrow">Android aplikace pro studenty ČZU</span>
+      <h1>Rozvrh z UIS.<br><em>Bez přihlašování.</em></h1>
+      <p class="lead">Přihlásíš se jednou a pak už jen otevřeš aplikaci. Týden jako v Bakalářích, jen hodiny, které opravdu máš, a widget na ploše, který ukáže, kam máš jít.</p>
+      <div class="cta">
+        <a class="btn btn-primary" href="https://github.com/Mirda-Nig/CZU-rozvrh/releases/latest/download/Rozvrh-CZU.apk">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11m0 0l-4.5-4.5M12 15l4.5-4.5M5 20h14"/></svg>
+          Stáhnout APK
+        </a>
+        <a class="btn btn-ghost" href="#instalace">Jak nainstalovat</a>
+      </div>
+      <p class="meta">Zdarma · Android 8.0+ · bez reklam a sledování</p>
+    </div>
+    <div class="phones" aria-hidden="true">
+      <div class="phone back"><img src="screenshots/den.png" alt=""></div>
+      <div class="phone front"><img src="screenshots/tyden-tmavy.png" alt=""></div>
+    </div>
+  </header>
+</div>
+
+<section>
+  <div class="wrap">
+    <h2>Všechno, co potřebuješ před přednáškou</h2>
+    <p class="section-lead">Žádné hledání v UIS, žádné klikání přes tři stránky. Otevřeš a vidíš.</p>
+    <div class="features">
+      <div class="card">
+        <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="11" rx="2.5"/><path d="M8 10V7a4 4 0 018 0v3"/></svg></div>
+        <h3>Přihlásíš se jednou</h3>
+        <p>Když UIS přihlášení vyprší, aplikace se sama přihlásí znovu. Zvládne i dvoufázové ověření.</p>
+      </div>
+      <div class="card">
+        <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="5" width="17" height="15.5" rx="3"/><path d="M3.5 10h17M8 3v4M16 3v4"/></svg></div>
+        <h3>Týden jako kalendář</h3>
+        <p>Všechny dny vedle sebe, každý předmět svou barvou, červená čára ukazuje, kolik je hodin.</p>
+      </div>
+      <div class="card">
+        <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M4 12h10M4 17h6"/><path d="M17 15l2 2 3-4"/></svg></div>
+        <h3>Sudé a liché týdny</h3>
+        <p>Vidíš jen hodiny, které v daném týdnu opravdu máš. Aplikace to bere přímo z poznámek v UIS.</p>
+      </div>
+      <div class="card">
+        <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg></div>
+        <h3>Co je teď a co bude</h3>
+        <p>„Teď · ještě 25 min“, „Za 15 min“, „Volno 1 h 30 min“. Denní přehled ti řekne, kolik máš času.</p>
+      </div>
+      <div class="card">
+        <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="3.5" width="7" height="7" rx="2"/><rect x="13.5" y="3.5" width="7" height="7" rx="2"/><rect x="3.5" y="13.5" width="17" height="7" rx="2"/></svg></div>
+        <h3>Widgety na plochu</h3>
+        <p>Rozvrh na den a další hodina rovnou na ploše. Samy se obnovují na začátku a konci každé hodiny.</p>
+      </div>
+      <div class="card">
+        <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 9a14 14 0 0119 0M5.5 12.5a9.5 9.5 0 0113 0M9 16a4.5 4.5 0 016 0"/><path d="M3 3l18 18"/></svg></div>
+        <h3>Funguje offline</h3>
+        <p>Poslední stažený rozvrh je uložený v telefonu, takže ho uvidíš i ve sklepě na Kamýcké.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2>Jak to vypadá</h2>
+    <p class="section-lead">Tmavý i světlý režim podle nastavení telefonu.</p>
+    <div class="gallery">
+      <figure class="shot"><img src="screenshots/tyden-tmavy.png" alt="Týdenní rozvrh v tmavém režimu" loading="lazy"><figcaption>Týden</figcaption></figure>
+      <figure class="shot"><img src="screenshots/den.png" alt="Denní přehled" loading="lazy"><figcaption>Den</figcaption></figure>
+      <figure class="shot"><img src="screenshots/detail.png" alt="Detail hodiny" loading="lazy"><figcaption>Detail hodiny</figcaption></figure>
+      <figure class="shot"><img src="screenshots/tyden-svetly.png" alt="Týdenní rozvrh ve světlém režimu" loading="lazy"><figcaption>Světlý režim</figcaption></figure>
+    </div>
+    <p class="note">Na ukázkách je smyšlený rozvrh.</p>
+  </div>
+</section>
+
+<section id="instalace">
+  <div class="wrap">
+    <h2>Instalace za minutu</h2>
+    <p class="section-lead">Aplikace není v Obchodě Play, nainstaluješ ji přímo ze staženého souboru.</p>
+    <div class="steps">
+      <div class="step"><h3>Stáhni APK</h3><p>V telefonu klepni na <a href="https://github.com/Mirda-Nig/CZU-rozvrh/releases/latest/download/Rozvrh-CZU.apk">Stáhnout APK</a>.</p></div>
+      <div class="step"><h3>Povol instalaci</h3><p>Otevři stažený soubor. Android se zeptá, jestli povolit instalaci z prohlížeče, tak dej <b>Povolit</b>.</p></div>
+      <div class="step"><h3>Play Protect</h3><p>Když ukáže „Neznámá aplikace“, klepni na <b>Další podrobnosti → Přesto nainstalovat</b>.</p></div>
+      <div class="step"><h3>Přihlas se</h3><p>Jménem a heslem do UIS. Číslo rozvrhu si aplikace najde sama.</p></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="privacy">
+      <div>
+        <h2>Tvoje heslo zůstává u tebe</h2>
+        <p class="section-lead" style="margin:0">Aplikace dělá jen to, co tvůj prohlížeč, když se díváš na rozvrh v UIS.</p>
+      </div>
+      <ul>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><span>Heslo se ukládá jen v tvém telefonu, zašifrované klíčem z Android Keystore.</span></li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><span>Komunikuje jen s <code>is.czu.cz</code>. Žádný vlastní server, analytika ani reklamy.</span></li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><span>Celý zdrojový kód je veřejně <a href="https://github.com/Mirda-Nig/CZU-rozvrh">na GitHubu</a>.</span></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<div class="wrap final">
+  <h2>Přestaň se přihlašovat do UIS kvůli rozvrhu</h2>
+  <p class="section-lead" style="margin: 0 auto 28px">Stačí stáhnout a jednou se přihlásit.</p>
+  <div class="cta">
+    <a class="btn btn-primary" href="https://github.com/Mirda-Nig/CZU-rozvrh/releases/latest/download/Rozvrh-CZU.apk">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11m0 0l-4.5-4.5M12 15l4.5-4.5M5 20h14"/></svg>
+      Stáhnout APK
+    </a>
+    <a class="btn btn-ghost" href="https://github.com/Mirda-Nig/CZU-rozvrh/releases">Všechny verze</a>
+  </div>
+</div>
+
+<footer>
+  <div class="wrap">
+    <span>Neoficiální studentský projekt, není spojený s Českou zemědělskou univerzitou v Praze.</span>
+    <a href="https://github.com/Mirda-Nig/CZU-rozvrh">Zdrojový kód</a>
+  </div>
+</footer>
+</body>
+</html>

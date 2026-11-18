@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Rozvrh ČZU</string>
+    <string name="widget_agenda_label">Rozvrh na den</string>
+    <string name="widget_agenda_desc">Zbývající hodiny dnes, nebo nejbližší den s výukou</string>
+    <string name="widget_next_label">Další hodina</string>
+    <string name="widget_next_desc">Co právě probíhá a co tě čeká jako další</string>
+</resources>

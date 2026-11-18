@@ -242,6 +242,31 @@
   footer .wrap { display: flex; flex-wrap: wrap; gap: 8px 24px; justify-content: space-between; }
   footer a { font-weight: 700; }
 
+  /* kafe – nenápadné, rozbalí se až na kliknutí */
+  .kafe { max-width: 420px; margin: 0 auto 36px; text-align: center; }
+  .kafe summary {
+    list-style: none; cursor: pointer; display: inline-flex; align-items: center; gap: 8px;
+    font-size: 14.5px; font-weight: 700; color: var(--muted);
+    padding: 9px 16px; border-radius: 999px; border: 1px dashed var(--line);
+    transition: color .2s ease, border-color .2s ease, background .2s ease;
+  }
+  .kafe summary::-webkit-details-marker { display: none; }
+  .kafe summary:hover, .kafe[open] summary { color: var(--ink); border-color: var(--czu); background: var(--surface); }
+  .kafe .cup { font-size: 18px; line-height: 1; }
+  .kafe .box {
+    margin-top: 14px; background: var(--surface); border: 1px solid var(--line); border-radius: 22px;
+    padding: 22px; box-shadow: var(--shadow); animation: pop .25s ease;
+  }
+  .kafe p { margin: 0 0 14px; font-size: 15px; color: var(--muted); }
+  .kafe img { width: 180px; height: 180px; border-radius: 12px; background: #fff; padding: 6px; display: block; margin: 0 auto 14px; image-rendering: pixelated; }
+  .kafe .acc { display: inline-flex; align-items: center; gap: 10px; font-size: 14px; color: var(--muted); }
+  .kafe .acc b { font-feature-settings: "tnum"; color: var(--ink); }
+  .kafe button {
+    font: 700 12.5px/1 Manrope, system-ui, sans-serif; cursor: pointer; color: var(--primary);
+    background: var(--primary-soft); border: 0; padding: 7px 10px; border-radius: 999px;
+  }
+  @keyframes pop { from { opacity: 0; transform: translateY(-6px) scale(.98); } to { opacity: 1; transform: none; } }
+
   /* náběh při posouvání */
   .js .reveal { opacity: 0; transform: translateY(18px); transition: opacity .6s ease, transform .6s ease; }
   .js .reveal.in { opacity: 1; transform: none; }
@@ -428,6 +453,15 @@
   <span class="hand">a pak už jen kafe před první hodinou</span>
 </div>
 
+<details class="kafe">
+  <summary><span class="cup">☕</span> Ušetřilo ti to nervy? Můžeš mi koupit kafe</summary>
+  <div class="box">
+    <p>Naskenuj QR kód v bankovní aplikaci, je to 25 Kč. Díky!</p>
+    <img src="kafe-qr.png" alt="QR platba 25 Kč" width="180" height="180" loading="lazy">
+    <div class="acc">Účet <b id="ucet">2802230405/2010</b> <button type="button" id="kopiruj">Zkopírovat</button></div>
+  </div>
+</details>
+
 <footer>
   <div class="wrap">
     <span>Neoficiální studentský projekt, není spojený s Českou zemědělskou univerzitou v Praze.</span>
@@ -444,6 +478,17 @@
       entries.forEach(function (en) { if (en.isIntersecting) { en.target.classList.add('in'); io.unobserve(en.target); } });
     }, { rootMargin: '0px 0px -8% 0px', threshold: 0.08 });
     els.forEach(function (e) { io.observe(e); });
+  })();
+  // zkopírování čísla účtu
+  (function () {
+    var b = document.getElementById('kopiruj');
+    if (!b || !navigator.clipboard) { if (b) b.hidden = true; return; }
+    b.addEventListener('click', function () {
+      navigator.clipboard.writeText(document.getElementById('ucet').textContent).then(function () {
+        b.textContent = 'Zkopírováno ✓';
+        setTimeout(function () { b.textContent = 'Zkopírovat'; }, 1800);
+      });
+    });
   })();
 </script>
 </body>

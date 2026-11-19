@@ -10,6 +10,7 @@ import com.example.czurozvrh.data.LoginResult
 import com.example.czurozvrh.data.NeedsManualLogin
 import com.example.czurozvrh.data.Timetable
 import com.example.czurozvrh.data.TimetableRepository
+import com.example.czurozvrh.notify.LessonNotifier
 import com.example.czurozvrh.widget.WidgetUpdater
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -29,6 +30,7 @@ data class UiState(
     val savedLogin: String = "",
     val studentId: String = "",
     val hideEmptyDays: Boolean = false,
+    val lessonCountdown: Boolean = true,
 )
 
 class RozvrhViewModel(app: Application) : AndroidViewModel(app) {
@@ -43,8 +45,10 @@ class RozvrhViewModel(app: Application) : AndroidViewModel(app) {
 
     init {
         if (BuildConfig.DEMO) {
-            _state.value = UiState(loggedIn = true, timetable = DemoData.timetable(), hideEmptyDays = false)
+            _state.value = UiState(loggedIn = true, timetable = DemoData.timetable(), hideEmptyDays = false,
+                lessonCountdown = LessonNotifier.isEnabled(app))
         } else initReal()
+        LessonNotifier.update(app)
     }
 
     private fun initReal() {
@@ -56,6 +60,7 @@ class RozvrhViewModel(app: Application) : AndroidViewModel(app) {
             savedLogin = creds?.login.orEmpty(),
             studentId = store.studentId.orEmpty(),
             hideEmptyDays = prefs.getBoolean("hideEmptyDays", false),
+            lessonCountdown = LessonNotifier.isEnabled(getApplication()),
         )
         if (creds != null) refresh()
         WidgetUpdater.schedulePeriodic(getApplication())
@@ -109,6 +114,7 @@ class RozvrhViewModel(app: Application) : AndroidViewModel(app) {
                 val t = repo.fetch()
                 _state.update { it.copy(loading = false, timetable = t) }
                 WidgetUpdater.updateAll(getApplication())
+                LessonNotifier.update(getApplication())
             } catch (e: NeedsManualLogin) {
                 _state.update {
                     it.copy(loading = false, loggedIn = false, loginError = e.message, pending2FA = e.pending2FA ?: it.pending2FA)
@@ -127,13 +133,22 @@ class RozvrhViewModel(app: Application) : AndroidViewModel(app) {
         _state.update { it.copy(hideEmptyDays = hide) }
     }
 
+    fun setLessonCountdown(enabled: Boolean) {
+        LessonNotifier.setEnabled(getApplication(), enabled)
+        _state.update { it.copy(lessonCountdown = enabled) }
+    }
+
+    /** Po udělení oprávnění k notifikacím je hned ukaž (pokud právě něco probíhá). */
+    fun onNotificationPermissionResult() = LessonNotifier.update(getApplication())
+
     fun clearError() = _state.update { it.copy(error = null) }
 
     fun cancel2FA() = _state.update { it.copy(pending2FA = null, loginError = null) }
 
     fun logout() {
         repo.logout()
-        _state.value = UiState(hideEmptyDays = _state.value.hideEmptyDays)
+        _state.value = UiState(hideEmptyDays = _state.value.hideEmptyDays, lessonCountdown = _state.value.lessonCountdown)
+        LessonNotifier.update(getApplication())
         viewModelScope.launch { WidgetUpdater.updateAll(getApplication()) }
     }
 }

@@ -12,6 +12,7 @@ import androidx.work.WorkerParameters
 import androidx.work.workDataOf
 import com.example.czurozvrh.data.TimetableRepository
 import com.example.czurozvrh.data.nextBoundary
+import com.example.czurozvrh.notify.LessonNotifier
 import java.time.Duration
 import java.time.LocalDateTime
 import java.util.concurrent.TimeUnit
@@ -65,6 +66,7 @@ class WidgetWorker(context: Context, params: WorkerParameters) : CoroutineWorker
     override suspend fun doWork(): Result {
         if (!inputData.getBoolean("tick", false)) WidgetUpdater.maybeRefetch(applicationContext)
         WidgetUpdater.updateAll(applicationContext)
+        LessonNotifier.update(applicationContext)
         return Result.success()
     }
 }

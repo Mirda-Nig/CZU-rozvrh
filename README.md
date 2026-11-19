@@ -27,6 +27,7 @@ Týdenní přehled jako v Bakalářích, sudé a liché týdny, widgety na ploch
 - **Přihlásíš se jednou.** Když UIS přihlášení vyprší, aplikace se sama přihlásí znovu. Funguje i dvoufázové ověření.
 - **Týden jako kalendář.** Všechny dny vedle sebe, každý předmět má svou barvu a červená čára ukazuje aktuální čas.
 - **Denní přehled.** Ukáže, co právě probíhá a kolik času zbývá, co bude další a kolik máš mezi hodinami volna.
+- **Odpočet v notifikacích.** Během hodiny ukazuje nahoře v liště, kolik zbývá do konce, stejně jako stopky. O přestávce odpočítává do začátku další hodiny. Dá se vypnout v Nastavení.
 - **Sudé a liché týdny.** Vidíš jen hodiny, které v daném týdnu opravdu máš. Bere se to z poznámek v UIS („Sudý týden“).
 - **Widgety na plochu.**
   - *Rozvrh na den*: zbývající hodiny dnes, nebo nejbližší den s výukou.

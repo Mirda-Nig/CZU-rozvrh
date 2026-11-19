@@ -1,5 +1,7 @@
 package com.example.czurozvrh.ui
 
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import android.content.Intent
 import android.net.Uri
 import androidx.compose.animation.AnimatedVisibility
@@ -84,6 +86,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.czurozvrh.data.Lesson
+import com.example.czurozvrh.notify.LessonNotifier
 import com.example.czurozvrh.data.Timetable
 import com.example.czurozvrh.data.TimetableParser.dayNames
 import com.example.czurozvrh.data.TimetableParser.dayNamesLong
@@ -173,6 +176,17 @@ fun TimetableScreen(state: UiState, vm: RozvrhViewModel) {
     val tt = state.timetable
     val weekLessons = tt?.lessonsInWeek(monday).orEmpty()
 
+    // Odpočet hodiny v notifikacích – na Androidu 13+ je potřeba oprávnění.
+    val context = LocalContext.current
+    val notifPermission = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) {
+        vm.onNotificationPermissionResult()
+    }
+    val requestNotifications = {
+        if (android.os.Build.VERSION.SDK_INT >= 33 && !LessonNotifier.canPost(context))
+            notifPermission.launch(android.Manifest.permission.POST_NOTIFICATIONS)
+    }
+    LaunchedEffect(Unit) { if (state.lessonCountdown) requestNotifications() }
+
     LaunchedEffect(state.error) {
         state.error?.let { snackbar.showSnackbar(it); vm.clearError() }
     }
@@ -222,7 +236,7 @@ fun TimetableScreen(state: UiState, vm: RozvrhViewModel) {
     }
 
     selected?.let { LessonSheet(it, onDismiss = { selected = null }) }
-    if (settings) SettingsDialog(state, vm, onDismiss = { settings = false })
+    if (settings) SettingsDialog(state, vm, requestNotifications, onDismiss = { settings = false })
     }
 }
 
@@ -816,7 +830,7 @@ private fun DetailRow(icon: ImageVector, value: String, label: String) {
 // =====================================================================
 
 @Composable
-private fun SettingsDialog(state: UiState, vm: RozvrhViewModel, onDismiss: () -> Unit) {
+private fun SettingsDialog(state: UiState, vm: RozvrhViewModel, requestNotifications: () -> Unit, onDismiss: () -> Unit) {
     AlertDialog(
         onDismissRequest = onDismiss,
         containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
@@ -837,6 +851,23 @@ private fun SettingsDialog(state: UiState, vm: RozvrhViewModel, onDismiss: () ->
                     }
                     Spacer(Modifier.width(12.dp))
                     Switch(checked = state.hideEmptyDays, onCheckedChange = vm::setHideEmptyDays)
+                }
+                val setCountdown = { on: Boolean ->
+                    vm.setLessonCountdown(on)
+                    if (on) requestNotifications()
+                }
+                Row(
+                    Modifier.fillMaxWidth().clip(RoundedCornerShape(14.dp))
+                        .clickable { setCountdown(!state.lessonCountdown) }.padding(vertical = 6.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Column(Modifier.weight(1f)) {
+                        Text("Odpočet v notifikacích", style = MaterialTheme.typography.titleSmall)
+                        Text("Během hodiny ukazuje nahoře, kolik zbývá do konce.",
+                            style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    }
+                    Spacer(Modifier.width(12.dp))
+                    Switch(checked = state.lessonCountdown, onCheckedChange = setCountdown)
                 }
                 Spacer(Modifier.height(18.dp))
                 Text("Widgety na plochu", style = MaterialTheme.typography.titleSmall)

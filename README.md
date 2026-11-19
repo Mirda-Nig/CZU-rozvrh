@@ -17,6 +17,7 @@ Týdenní přehled jako v Bakalářích, sudé a liché týdny, widgety na ploch
 <img src="docs/screenshots/tyden-svetly.png" width="23%" alt="Týden – světlý režim">
 
 <img src="docs/screenshots/notifikace.png" width="60%" alt="Odpočet do konce hodiny v notifikacích">
+<img src="docs/screenshots/widgety.png" width="45%" alt="Widgety s živým odpočtem">
 
 <sub>Na screenshotech je smyšlený ukázkový rozvrh.</sub>
 
@@ -33,7 +34,8 @@ Týdenní přehled jako v Bakalářích, sudé a liché týdny, widgety na ploch
 - **Sudé a liché týdny.** Vidíš jen hodiny, které v daném týdnu opravdu máš. Bere se to z poznámek v UIS („Sudý týden“).
 - **Widgety na plochu.**
   - *Rozvrh na den*: zbývající hodiny dnes, nebo nejbližší den s výukou.
-  - *Další hodina*: „TEĎ · ještě 25 min“, „ZA 15 MIN · 10:30“…
+  - *Další hodina*: „TEĎ · ještě 24:13“, „ZA 12:05 · 10:30“…
+  - Během hodiny v nich běží živý odpočet do konce, po sekundách.
 - **Offline.** Poslední stažený rozvrh je uložený v telefonu.
 - **Skrytí dnů bez výuky**, tmavý i světlý režim a období výuky podle UIS (mimo semestr ukáže prázdný týden).
 

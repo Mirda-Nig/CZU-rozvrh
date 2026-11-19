@@ -21,6 +21,10 @@ import com.example.czurozvrh.data.Timetable
 import com.example.czurozvrh.data.TimetableRepository
 import com.example.czurozvrh.data.lessonsOn
 import com.example.czurozvrh.data.nextBoundary
+import com.example.czurozvrh.widget.WidgetUpdater
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.time.Duration
 import java.time.LocalDateTime
 import java.time.LocalTime
@@ -182,5 +186,10 @@ object LessonNotifier {
 class LessonAlarmReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
         LessonNotifier.update(context)
+        // Přesně na hranici hodiny překresli i widgety (jejich odpočet jinak doběhne do mínusu).
+        val pending = goAsync()
+        CoroutineScope(Dispatchers.Default).launch {
+            try { WidgetUpdater.updateAll(context) } finally { pending.finish() }
+        }
     }
 }

@@ -192,6 +192,8 @@
   .notif-shot { margin: 48px auto 0; max-width: 520px; text-align: center; }
   .notif-shot img { width: 100%; display: block; border-radius: 30px; box-shadow: var(--shadow); transform: rotate(-1deg); }
   .notif-shot figcaption { margin-top: 14px; font-size: 15px; opacity: .75; }
+  .widget-shot { max-width: 440px; margin-top: 36px; }
+  .widget-shot img { box-shadow: none; border-radius: 0; filter: drop-shadow(0 10px 24px rgba(0,0,0,.18)); transform: rotate(1deg); }
   .shot:hover .frame { transform: rotate(0) translateY(-6px); }
   .shot figcaption { margin-top: 16px; text-align: center; }
   .shot figcaption span {
@@ -372,7 +374,7 @@
         <div class="slot"><span class="tag">Plocha</span><time>14:00</time></div>
         <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="3.5" width="7" height="7" rx="2"/><rect x="13.5" y="3.5" width="7" height="7" rx="2"/><rect x="3.5" y="13.5" width="17" height="7" rx="2"/></svg></div>
         <h3>Widgety na plochu</h3>
-        <p>Rozvrh na den a další hodina rovnou na ploše. Samy se obnovují na začátku a konci každé hodiny.</p>
+        <p>Rozvrh na den a další hodina rovnou na ploše. Během hodiny v nich běží živý odpočet do konce.</p>
       </div>
       <div class="card c-mustard reveal">
         <div class="slot"><span class="tag">Offline</span><time>15:45</time></div>
@@ -401,6 +403,7 @@
       <figure class="shot reveal"><div class="frame"><img src="screenshots/tyden-svetly.png" alt="Týdenní rozvrh ve světlém režimu" loading="lazy"></div><figcaption><span>Světlý režim</span></figcaption></figure>
     </div>
     <figure class="notif-shot reveal"><img src="screenshots/notifikace.png" alt="Notifikace s odpočtem do konce hodiny" loading="lazy"><figcaption>Odpočet do konce hodiny v notifikacích</figcaption></figure>
+    <figure class="notif-shot widget-shot reveal"><img src="screenshots/widgety.png" alt="Widgety s živým odpočtem do konce hodiny" loading="lazy"><figcaption>Widgety na plochu s živým odpočtem</figcaption></figure>
     <p class="note">Na ukázkách je smyšlený rozvrh.</p>
   </div>
 </section>

@@ -13,21 +13,14 @@ import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
-import androidx.compose.ui.graphics.toArgb
 import com.example.czurozvrh.BuildConfig
 import com.example.czurozvrh.MainActivity
 import com.example.czurozvrh.R
 import com.example.czurozvrh.data.DemoData
-import com.example.czurozvrh.data.Lesson
 import com.example.czurozvrh.data.Timetable
 import com.example.czurozvrh.data.TimetableRepository
-import com.example.czurozvrh.data.colorKey
 import com.example.czurozvrh.data.lessonsOn
 import com.example.czurozvrh.data.nextBoundary
-import com.example.czurozvrh.data.subjectKeys
-import com.example.czurozvrh.ui.theme.LightInk
-import com.example.czurozvrh.ui.theme.LightSurface
-import com.example.czurozvrh.ui.theme.SubjectPalette
 import java.time.Duration
 import java.time.LocalDateTime
 import java.time.LocalTime
@@ -43,6 +36,8 @@ object LessonNotifier {
     private const val CHANNEL = "lesson-countdown"
     private const val NOTIFICATION_ID = 1001
     private const val PREF = "lessonCountdown"
+    /** Zelená z loga ČZU (stejná jako podklad ikony aplikace). */
+    private const val CZU_GREEN = 0xFF73BE46.toInt()
 
     /** Přestávka delší než tohle už se neodpočítává (to je spíš volno). */
     private val MAX_BREAK: Duration = Duration.ofMinutes(45)
@@ -88,7 +83,7 @@ object LessonNotifier {
             current != null -> {
                 val after = today.firstOrNull { !it.start.isBefore(current.end) }
                 build(
-                    context, tt, current,
+                    context,
                     target = current.end,
                     title = current.name,
                     text = listOf(current.room, "do ${current.end.fmt()}").filter { it.isNotBlank() }.joinToString(" · "),
@@ -97,7 +92,7 @@ object LessonNotifier {
             }
             next != null && hadLessonBefore && Duration.between(t, next.start) <= MAX_BREAK ->
                 build(
-                    context, tt, next,
+                    context,
                     target = next.start,
                     title = "Přestávka · další ${next.shortName}",
                     text = listOf(next.room, "od ${next.start.fmt()}").filter { it.isNotBlank() }.joinToString(" · "),
@@ -114,8 +109,6 @@ object LessonNotifier {
 
     private fun build(
         context: Context,
-        tt: Timetable,
-        lesson: Lesson,
         target: LocalTime,
         title: String,
         text: String,
@@ -124,7 +117,6 @@ object LessonNotifier {
         val now = LocalDateTime.now()
         val targetAt = now.toLocalDate().atTime(target)
         val targetMillis = targetAt.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
-        val accent = SubjectPalette(false, LightSurface, LightInk).ordered(tt.subjectKeys()).of(lesson.colorKey).accent
         val open = PendingIntent.getActivity(
             context, 0,
             Intent(context, MainActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP),
@@ -132,7 +124,7 @@ object LessonNotifier {
         )
         return NotificationCompat.Builder(context, CHANNEL)
             .setSmallIcon(R.drawable.ic_stat_lesson)
-            .setColor(accent.toArgb())
+            .setColor(CZU_GREEN)
             .setContentTitle(title)
             .setContentText(text)
             .apply { if (sub != null) setSubText(sub) }

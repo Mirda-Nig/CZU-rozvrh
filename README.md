@@ -16,6 +16,8 @@ Týdenní přehled jako v Bakalářích, sudé a liché týdny, widgety na ploch
 <img src="docs/screenshots/detail.png" width="23%" alt="Detail hodiny">
 <img src="docs/screenshots/tyden-svetly.png" width="23%" alt="Týden – světlý režim">
 
+<img src="docs/screenshots/notifikace.png" width="60%" alt="Odpočet do konce hodiny v notifikacích">
+
 <sub>Na screenshotech je smyšlený ukázkový rozvrh.</sub>
 
 </div>
